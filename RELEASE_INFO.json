@@ -5,7 +5,7 @@
   "baseline_weight": "weights/baseline.pth",
   "baseline_weight_sha256": "42a04535d33de94acc58ae3c66a9a2d161e975ee17adae6cae533770d1929c3e",
   "public_data_archive": "SuperShip-public-data.tar.zst",
-  "public_data_archive_sha256": "46e0b3a18ceaa0a95d8093aa7c4211c16dd69e4e27247a82146131e50e18f3fb",
+  "public_data_archive_sha256": "4f70f1167ee51090e30f5f3c4915f821b2c960d307610902ad666ae92ea69b71",
   "public_data_distribution": "Tsinghua Cloud",
   "splits": {
     "train": {"images": 2405, "annotations": 11904},

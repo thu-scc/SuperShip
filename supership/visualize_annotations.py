@@ -4,9 +4,9 @@ Draws bboxes and category names (plus score if present) over the image and
 saves the result.
 
 Usage (from anywhere):
-  python data/THU-RS-COMP/baseline/scripts/visualize_annotations.py \
-    --img data/THU-RS-COMP/train/images/000006.jpg \
-    --ann data/THU-RS-COMP/train/annotations/instances_train.json \
+  python supership/visualize_annotations.py \
+    --img data/SuperShip/train/images/000006.jpg \
+    --ann data/SuperShip/train/annotations/instances_train.json \
     -o vis.jpg
 
 The annotation json must be COCO style (bbox = [x, y, w, h] in pixels).
@@ -37,8 +37,10 @@ def load_font(size):
 
 
 def find_image_entry(ann_data, img_path, image_id):
-    images = ann_data.get('images')
+    images = ann_data.get('images') if isinstance(ann_data, dict) else None
     if images is None:
+        if image_id is None:
+            raise SystemExit('--image-id is required for prediction arrays')
         return image_id
     basename = os.path.basename(img_path)
     for im in images:
@@ -69,10 +71,11 @@ def main():
         ann_data = json.load(f)
 
     categories = {c['id']: c.get('name', str(c['id']))
-                  for c in ann_data.get('categories', [])}
+                  for c in ann_data.get('categories', [])} if isinstance(ann_data, dict) else {}
 
     img_id = find_image_entry(ann_data, args.img, args.image_id)
-    anns = [a for a in ann_data.get('annotations', [])
+    annotations = ann_data if isinstance(ann_data, list) else ann_data.get('annotations', [])
+    anns = [a for a in annotations
             if a.get('image_id') == img_id and
             a.get('score', 1.0) >= args.min_score]
 

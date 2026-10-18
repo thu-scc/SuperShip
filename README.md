@@ -27,10 +27,10 @@ The remaining 4,300 hidden-test images, metadata, and annotations are not includ
 
 ### Download and install
 
-Download `SuperShip-public-data.tar.zst` from the [Tsinghua Cloud link](https://cloud.tsinghua.edu.cn/d/da024b91e33a46cb8200/). Its expected SHA-256 is:
+Download `SuperShip-public-data-v2.tar.zst` from the [Tsinghua Cloud link](https://cloud.tsinghua.edu.cn/d/da024b91e33a46cb8200/). Its expected SHA-256 is:
 
 ```text
-46e0b3a18ceaa0a95d8093aa7c4211c16dd69e4e27247a82146131e50e18f3fb
+4f70f1167ee51090e30f5f3c4915f821b2c960d307610902ad666ae92ea69b71
 ```
 
 Install an archive already downloaded to the local machine:
@@ -176,3 +176,21 @@ python3 supership/score_submission.py \
 ```
 
 Official ranking is performed by the organizer on the unreleased 4,300-image hidden test set.
+
+Predictions with non-positive width or height are accepted but cannot match any
+ground-truth object. They remain in confidence ranking and COCO `maxDets`
+selection as unmatched detections; they are not silently removed. Malformed
+JSON, invalid IDs, non-finite numbers, and scores outside `[0, 1]` are rejected.
+The reported `0.916` baseline is for validation, not the public reference split.
+
+Worker processes must finish their child tasks and close the output before
+completion. The Linux timing tool waits for remaining processes in the worker
+process group within the run timeout, including that time in the measurement.
+Failure or timeout terminates the process group. Workers must not detach tasks
+into a separate session or process group.
+
+## Tests
+
+```bash
+python3 -m unittest discover -s tests -v
+```

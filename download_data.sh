@@ -6,7 +6,7 @@ cd "$ROOT"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
 
 ARCHIVE_NAME="SuperShip-public-data.tar.zst"
-EXPECTED_SHA256="46e0b3a18ceaa0a95d8093aa7c4211c16dd69e4e27247a82146131e50e18f3fb"
+EXPECTED_SHA256="4f70f1167ee51090e30f5f3c4915f821b2c960d307610902ad666ae92ea69b71"
 SOURCE="${1:-${SUPERSHIP_DATA_URL:-}}"
 
 if [[ -z "$SOURCE" ]]; then
@@ -47,6 +47,8 @@ command -v zstd >/dev/null || {
   exit 1
 }
 
-tar --use-compress-program='zstd -d' -xf "$ARCHIVE" -C "$ROOT"
+# macOS-created archives may contain AppleDouble sidecars, not dataset images.
+tar --use-compress-program='zstd -d' --exclude='._*' \
+  --warning=no-unknown-keyword -xf "$ARCHIVE" -C "$ROOT"
 "$PYTHON_BIN" supership/validate_release.py
 echo "SuperShip public data installed under data/SuperShip/."

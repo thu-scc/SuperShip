@@ -86,11 +86,14 @@ def run_inference(
 
             for target, detection in zip(targets, detections):
                 image_id = target["image_id"].item()
-                boxes = detection["boxes"]
+                # Transfer all boxes once, avoiding one CUDA copy per query.
+                boxes = detection["boxes"].tolist()
                 scores = detection["scores"].tolist()
                 labels = detection["labels"].tolist()
                 for index, score in enumerate(scores):
-                    x1, y1, x2, y2 = boxes[index].tolist()
+                    x1, y1, x2, y2 = boxes[index]
+                    width = round(x2 - x1, 2)
+                    height = round(y2 - y1, 2)
                     results.append(
                         {
                             "image_id": image_id,
@@ -98,8 +101,8 @@ def run_inference(
                             "bbox": [
                                 round(x1, 2),
                                 round(y1, 2),
-                                round(x2 - x1, 2),
-                                round(y2 - y1, 2),
+                                width,
+                                height,
                             ],
                             "score": round(score, 5),
                         }
